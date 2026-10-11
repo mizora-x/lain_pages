@@ -1,7 +1,10 @@
 # 開発・自動検証
 
 依存復元とスクリプト実行にはBun 1.4.2を使用する。Next.jsや検証ツール向けにNode.js 22も用意する。
-ルートと `workers/site-api` の既存 `bun.lockb` を維持し、依存バージョンやロック形式は変更しない。ルートに元から存在する `package-lock.json` も今回削除しない。
+ルートのロックファイルはテキスト形式の `bun.lock`（Bun 1.4.2で生成）。Bun 1.2系では読めない形式なので、CI（`ci.yml`）とCloudflare Pages（環境変数 `BUN_VERSION`）のBunバージョンを必ず揃えて更新する。
+`workers/site-api` は従来どおりバイナリ形式の `bun.lockb`。
+
+Dependabotは `bun` エコシステムでルートの `bun.lock` を更新する。`package-lock.json` は不要になったため削除した。
 
 ## 初回準備
 
@@ -49,7 +52,7 @@ CloudflareのGitHub連携による自動デプロイとは独立したCI。push�
 
 - コードチェック: 99ファイル成功。
 - フロント、Worker本体、Workerテストの型チェック: 成功。
-- Bun 1.4.2でルートとWorkerの `bun install --frozen-lockfile` が成功。既存の `bun.lockb` とルートの `package-lock.json` に変更はない。
+- Bun 1.4.2でルートとWorkerの `bun install --frozen-lockfile` が成功。
 - Bun経由でコードチェック99ファイル、フロントとWorker本体・テストの型チェック、7ファイル・63テストが成功。
 - WorkerテストのローカルRuntimeは設定の互換日付 `2026-05-03` をサポートせず、`2026-03-10` にフォールバックする警告がある。本番と同じ互換日付での保証には、テストRuntimeの更新が必要。
 - 通常版のビルド・静的出力チェックが成功。GitHub Pages向けの検証は廃止した。
