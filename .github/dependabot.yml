@@ -15,9 +15,17 @@ updates:
       - "lain"
     assignees:
       - "lain"
+    # The bun ecosystem cannot update transitive dependencies on their own.
     allow:
       - dependency-type: "direct"
-      - dependency-type: "indirect"
+    groups:
+      # react and react-dom must stay on the exact same version or the build fails.
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
